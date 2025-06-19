@@ -5,12 +5,12 @@ import time
 def find_left():
     """Determines the x, y position of the bottom left corners, along with the height of the minesweeper board"""
     screenshot = pyautogui.screenshot()
-    width, height = pyautogui.size()
+    screenWidth, screenHeight = pyautogui.size()
 
     pixelCount = 0
     firstLine = False
-    for x in range(width):
-        for y in range(height):
+    for x in range(screenWidth):
+        for y in range(screenHeight):
             target = screenshot.getpixel((x, y))
             if target == (189, 189, 189) and pixelCount >= 50:
                 if firstLine is False:
@@ -29,9 +29,9 @@ def find_Width(topLeft):
     """ Determines the width of the minesweeper board, which can be used to find the last two corners"""
     pixelCount = 0
     screenshot = pyautogui.screenshot()
-    width = pyautogui.size()[0]
+    screenWidth = pyautogui.size()[0]
 
-    for x in range(topLeft[0], width):
+    for x in range(topLeft[0], screenWidth):
         target = screenshot.getpixel((x, topLeft[1]))
         if target == (123, 123, 123):
             pixelCount += 1
