@@ -4,6 +4,7 @@ import pyautogui
 import win32api
 import win32con
 from discover_board import discover_board
+from discover_tiles import discover_tiles
 
 # Start button RGB: 255, 255, 0
 # Border RGB: 189, 189, 189
@@ -31,10 +32,16 @@ def click(x, y):
 
 
 def start_game():
+
     topLeft, topRight, bottomLeft, bottomRight, boardWidth, boardHeight, startButton = discover_board()
+    print(topLeft, topRight, bottomLeft, bottomRight, boardWidth, boardHeight, startButton)
+
+    heightTileCount, widthTileCount = discover_tiles(topLeft, boardHeight, boardWidth)
+    print("The Minesweeper board is", heightTileCount, "by", widthTileCount)
 
 
 keyboard.add_hotkey('=', start_game)
+keyboard.add_hotkey('-', print_cursor_position)
 
 print("Running Program")
 keyboard.wait('esc')
