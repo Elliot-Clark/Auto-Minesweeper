@@ -36,7 +36,7 @@ def start_game():
     topLeft, topRight, bottomLeft, bottomRight, boardWidth, boardHeight, startButton = discover_board()
     print(topLeft, topRight, bottomLeft, bottomRight, boardWidth, boardHeight, startButton)
 
-    heightTileCount, widthTileCount = discover_tiles(topLeft, boardHeight, boardWidth)
+    heightTileCount, widthTileCount = discover_tiles(topLeft, boardWidth, boardHeight)
     print("The Minesweeper board is", heightTileCount, "by", widthTileCount)
 
 
