@@ -105,7 +105,7 @@ def produce_grid(topLeft, boardHeight, boardWidth, heightTileCount, widthTileCou
 
     for y in range(heightTileCount):
         for x in range(widthTileCount):
-            gameBoard[x][y] = (
+            gameBoard[y][x] = (
                 topLeft[0] + int(boardWidth * x/widthTileCount) + offsetX,
                 topLeft[1] + int(boardHeight * y/heightTileCount) + offsetY
             )
