@@ -1,8 +1,10 @@
 import pyautogui
 import re
-import time
 
+# Controls clicking speed. 0.1 is default.
+pyautogui.PAUSE = 0.1
 
+# RBG Color Codes
 # Empty Cell: 189, 189, 189
 # Border : 255, 255, 255
 # 1: 0, 0, 255
@@ -20,7 +22,12 @@ def display_2D_grid(array):
         print(array[x])
     print()
 
+
 def read_board(coordinateGameBoard, characterGameBoard):
+    """
+    Reads the RGB values are a given pixel coordinate to determine what exactly is on each given cell
+    Is optimized to only read each cell once per game.
+    """
     screenshot = pyautogui.screenshot()
 
     def read_cell(coordinates):
@@ -55,6 +62,11 @@ def read_board(coordinateGameBoard, characterGameBoard):
 
 
 def find_moves(coordinateGameBoard, characterGameBoard):
+    """
+    Cycles through all cells on a game board and clicks or flags every cell with enough information to determine
+    if it is safe or not. If no move is made, it will resort to guessing.
+    Returns False is the game is ongoing. Otherwise, return True is game is over.
+    """
     def find_surrounding_cells(column, row):
         """
         Returns an array of x, y, coordinates of cells surrounding a passed number cell with possible mines around it.
@@ -72,11 +84,16 @@ def find_moves(coordinateGameBoard, characterGameBoard):
                     mineCells.append((y, x))
         return blankCells, mineCells
 
+    madeAction = False
+
+    # 1 - 9 value represent their corresponding integers on the Minesweeper board
+    # ? = Unclicked cell
+    # ! = Clicked cell that needs to be checked to see which integer is under it
+    # M = Mine, these are flagged to not be clicked
     for column in range(len(characterGameBoard)):
         for row in range(len(characterGameBoard[0])):
             if bool(re.search(r'[1-9]', characterGameBoard[column][row])) is True:
                 surroundingBlankCells, surroundingMines = find_surrounding_cells(column, row)
-
                 if int(characterGameBoard[column][row]) == len(surroundingBlankCells) + len(surroundingMines):
                     # A mine is confirmed in surrounding cells.
                     # We mark it on our gameBoard in addition to clicking its spot on the screen
@@ -85,6 +102,7 @@ def find_moves(coordinateGameBoard, characterGameBoard):
                         characterGameBoard[indexPosition[0]][indexPosition[1]] = 'M'
                         # Right-clicking to flag mines is just for show. Can disable to speed up execution
                         pyautogui.rightClick(coordinateGameBoard[indexPosition[0]][indexPosition[1]])
+                        madeAction = True
                 elif len(surroundingBlankCells) == 0:
                     # If there are no cells to click surrounding a number, as far as the program is concerned we can
                     # ignore it from now on. Setting it to a different value to not waste computation time later
@@ -94,13 +112,33 @@ def find_moves(coordinateGameBoard, characterGameBoard):
                         indexPosition = surroundingBlankCells[x]
                         characterGameBoard[indexPosition[0]][indexPosition[1]] = '!'
                         pyautogui.click(coordinateGameBoard[indexPosition[0]][indexPosition[1]])
+                        madeAction = True
+    if madeAction is False:
+        # If we reach this point, the code hasn't made a move this round, so either two events have happened.
+        #  1. the program couldn't find a guaranteed click, and we have to resort to a guess
+        #  This can happen often in Minesweeper games. There is no way to guarantee a win in every game.
+        #  2. It hasn't made a move since there are no more to make. Meaning the game is over and you won.
+        for column in range(len(characterGameBoard)):
+            for row in range(len(characterGameBoard[0])):
+                if bool(re.search(r'[1-9]', characterGameBoard[column][row])) is True:
+                    surroundingBlankCells, surroundingMines = find_surrounding_cells(column, row)
+                    if len(surroundingBlankCells) > 0:
+                        # We tell the program to click on the first non-clicked cell next to a number cell
+                        pyautogui.click(coordinateGameBoard[surroundingBlankCells[0][0]][surroundingBlankCells[0][1]])
+                        return False
+        print("You won!!!")
+        return True
+    else:
+        return False
 
 
 def play_board(coordinateGameBoard, start):
-    display_2D_grid(coordinateGameBoard)
     characterGameBoard = [["?" for _ in range(len(coordinateGameBoard))] for _ in range(len(coordinateGameBoard[0]))]
 
     # while True:
-    for x in range(6):
+    for x in range(10):
         read_board(coordinateGameBoard, characterGameBoard)
-        find_moves(coordinateGameBoard, characterGameBoard)
+        if find_moves(coordinateGameBoard, characterGameBoard) is False:
+            continue
+        else:
+            return True
