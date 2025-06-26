@@ -1,5 +1,11 @@
 import pyautogui
-import time
+
+
+def display_2D_grid(array):
+    """ Displays arrays in a grid format. Used for visualization and testing purposes only."""
+    for i in range(len(array)):
+        print(array[i])
+    print()
 
 
 def find_leftSide():
@@ -99,7 +105,7 @@ def produce_grid(topLeft, boardHeight, boardWidth, heightTileCount, widthTileCou
     grid containing the horizontal and vertical center of every cell on the Minesweeper board.
     This information will be used to determine where to click and what exactly is on each cell going forward
     """
-    gameBoard = [[0 for _ in range(heightTileCount)] for _ in range(widthTileCount)]
+    gameBoard = [[0 for _ in range(widthTileCount)] for _ in range(heightTileCount)]
     offsetX = int(boardWidth * 1 / widthTileCount * .5)
     offsetY = int(boardHeight * 1 / heightTileCount * .5)
 
@@ -109,7 +115,6 @@ def produce_grid(topLeft, boardHeight, boardWidth, heightTileCount, widthTileCou
                 topLeft[0] + int(boardWidth * x/widthTileCount) + offsetX,
                 topLeft[1] + int(boardHeight * y/heightTileCount) + offsetY
             )
-
     return gameBoard
 
 
