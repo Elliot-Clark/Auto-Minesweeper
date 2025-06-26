@@ -18,22 +18,25 @@ pyautogui.PAUSE = 0.1
 
 
 def display_2D_grid(array):
-    for x in range(len(array)):
-        print(array[x])
+    """ Displays arrays in a grid format. Used for visualization and testing purposes only."""
+    for i in range(len(array)):
+        print(array[i])
     print()
 
 
 def read_board(coordinateGameBoard, characterGameBoard):
     """
     Reads the RGB values are a given pixel coordinate to determine what exactly is on each given cell
-    Is optimized to only read each cell once per game.
+    This program is optimized to only read each cell once per game.
     """
     screenshot = pyautogui.screenshot()
 
     def read_cell(coordinates):
         count = 0
         for x in range(50):
+            # Moving up and to the right until a matching pixel is found.
             target = screenshot.getpixel((coordinates[0] - x, coordinates[1] - x))
+            # Edit these RGB values to get this program to work on Minesweeper games other than the classical colors
             if target == (0, 0, 255):
                 return "1"
             if target == (0, 123, 0):
@@ -47,6 +50,13 @@ def read_board(coordinateGameBoard, characterGameBoard):
             if target == (0, 123, 123):
                 return "6"
             if target == (0, 0, 0):
+                # This RGB value is shared with mines, which only show up if you lost
+                # So an additional check is done to see if any further execution of the program is pointless
+                for y in range(25):
+                    loseCheck = screenshot.getpixel((coordinates[0] - y, coordinates[1] - y))
+                    if loseCheck == (255, 0, 0) or loseCheck == (255, 255, 255):
+                        print("Game Lost")
+                        return False
                 return "7"
             if target == (123, 123, 123) and count < 5:
                 return "8"
@@ -59,6 +69,8 @@ def read_board(coordinateGameBoard, characterGameBoard):
         for row in range(len(coordinateGameBoard[0])):
             if characterGameBoard[column][row] == "?" or characterGameBoard[column][row] == "!":
                 characterGameBoard[column][row] = read_cell(coordinateGameBoard[column][row])
+                if characterGameBoard[column][row] is False:
+                    return False
 
 
 def find_moves(coordinateGameBoard, characterGameBoard):
@@ -107,6 +119,7 @@ def find_moves(coordinateGameBoard, characterGameBoard):
                     # If there are no cells to click surrounding a number, as far as the program is concerned we can
                     # ignore it from now on. Setting it to a different value to not waste computation time later
                     characterGameBoard[column][row] = '-'
+                    continue
                 if len(surroundingMines) == int(characterGameBoard[column][row]) and len(surroundingBlankCells) > 0:
                     for x in range(len(surroundingBlankCells)):
                         indexPosition = surroundingBlankCells[x]
@@ -126,18 +139,23 @@ def find_moves(coordinateGameBoard, characterGameBoard):
                         # We tell the program to click on the first non-clicked cell next to a number cell
                         pyautogui.click(coordinateGameBoard[surroundingBlankCells[0][0]][surroundingBlankCells[0][1]])
                         return False
-        print("You won!!!")
+        print("You won!")
         return True
     else:
         return False
 
 
-def play_board(coordinateGameBoard, start):
-    characterGameBoard = [["?" for _ in range(len(coordinateGameBoard))] for _ in range(len(coordinateGameBoard[0]))]
+def play_board(coordinateGameBoard):
+    # Initial game board creation for all unclicked tiles.
+    characterGameBoard = [["?" for _ in range(len(coordinateGameBoard[0]))] for _ in range(len(coordinateGameBoard))]
 
-    # while True:
-    for x in range(10):
-        read_board(coordinateGameBoard, characterGameBoard)
+    # As a precaution, the game will only run for as many rounds as there are cells on the board
+    # This is to prevent users from getting stuck in infinite loops
+    # Realistically speaking, any game will likely be finished long before this point
+    # as a single execution of this loop will end up clicking many cells
+    for i in range(len(coordinateGameBoard[0]) * (len(coordinateGameBoard))):
+        if read_board(coordinateGameBoard, characterGameBoard) is False:
+            return True
         if find_moves(coordinateGameBoard, characterGameBoard) is False:
             continue
         else:
