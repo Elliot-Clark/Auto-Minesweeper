@@ -29,6 +29,10 @@ def start_game(gameBoard, startButton):
     pyautogui.click(gameBoard[middleRow][middleCol])
 
 
+gameBoard = False
+startButton = False
+
+
 def auto_Minesweeper():
     """Main Function of this program. Auto plays Minesweeper upon pressing the hotkey with the gameboard on screen"""
 
@@ -37,7 +41,9 @@ def auto_Minesweeper():
     # This is all determined using pyautogui and screen reading in the discover_board.py file
     # What we need from it is mostly the x, y pixel coordinates on your screen for every cell on the Minesweeper board
     # This information only needs to be determined once on initialization, and won't run again if there are repeat plays
-    gameBoard, startButton = discover_board()
+    global gameBoard, startButton
+    if gameBoard is False:
+        gameBoard, startButton = discover_board()
 
     # Now that we have all the information, we can start the game.
     start_game(gameBoard, startButton)
