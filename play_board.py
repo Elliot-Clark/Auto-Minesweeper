@@ -137,7 +137,17 @@ def find_moves(coordinateGameBoard, characterGameBoard):
                     surroundingBlankCells, surroundingMines = find_surrounding_cells(column, row)
                     if len(surroundingBlankCells) > 0:
                         # We tell the program to click on the first non-clicked cell next to a number cell
-                        pyautogui.click(coordinateGameBoard[surroundingBlankCells[0][0]][surroundingBlankCells[0][1]])
+                        guessCell = coordinateGameBoard[surroundingBlankCells[0][0]][surroundingBlankCells[0][1]]
+                        pyautogui.click(guessCell)
+                        screenshot = pyautogui.screenshot()
+                        target = screenshot.getpixel((guessCell[0] + 15, guessCell[1] + 15))
+                        if target == (0, 0, 0):
+                            # Checking for a mine in the location we just guess clicked for game over
+                            for y in range(25):
+                                loseCheck = screenshot.getpixel((guessCell[0] - y, guessCell[1] - y))
+                                if loseCheck == (255, 0, 0) or loseCheck == (255, 255, 255):
+                                    print("Game Lost")
+                                    return True
                         return False
         print("You won!")
         return True
