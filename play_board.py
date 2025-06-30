@@ -2,7 +2,7 @@ import pyautogui
 import re
 
 # Controls clicking speed. 0.1 is default.
-pyautogui.PAUSE = 0.1
+pyautogui.PAUSE = 0.05
 
 # RBG Color Codes
 # Empty Cell: 189, 189, 189
