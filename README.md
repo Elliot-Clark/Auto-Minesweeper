@@ -16,5 +16,4 @@ This controls the time delay between each click pyautogui performs and can be ch
 For reference 0.1 speed is demonstrated on the beginner and intermediate levels in the animated gif below while 0.01 speed is used on the expert level.
 Keep in mind, pyautogui clicking at 0.01 will make it harder to trigger a fail-safe stop.
 
-<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmlmdHVvYzd4NXlodHd1aDM2YzRpc2pncmJkbjRnanZtdnp6bzBycCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TeYY3hh41kxCadW790/giphy.gif" alt="Auto Minesweeper being used on three difficulties of Minesweeper">
-
+![Auto Minesweeper](https://media.giphy.com/media/TeYY3hh41kxCadW790/giphy.gif)
